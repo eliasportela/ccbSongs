@@ -1,0 +1,18 @@
+#CD 
+ID
+title
+singer
+category
+volume
+
+
+#Hinos
+id_hymn
+id_cd
+title
+url
+
+URLs =>
+https://www.canticosccb.com.br/cds/3032/songs
+https://www.canticosccb.com.br/cds/3032
+
