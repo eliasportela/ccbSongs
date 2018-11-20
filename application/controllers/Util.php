@@ -14,11 +14,11 @@ class Util extends CI_Controller {
 
 		for ($i=$cd_inicio; $i <= $cd_fim; $i++) {
 
-			$page = 'http://www.canticosccb.com.br/cds/'.$i.'/songs';
+            $base = "http://www.canticosccb.com.br/";
+			$page = $base . "cds/'.$i.'/songs";
 			
-	        $service_url     = $page;
-
-	        $curl            = curl_init($service_url);
+	        $service_url = $page;
+	        $curl = curl_init($service_url);
 	        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 	        curl_setopt($curl, CURLOPT_POST, false);
 	        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
@@ -26,37 +26,49 @@ class Util extends CI_Controller {
 	        $curl_response   = curl_exec($curl);
 	        curl_close($curl);
 
-	        $json_objekat    = json_decode($curl_response);
-	        //$quotes          = $json_objekat->contents->quotes;
+	        $json_objekat = json_decode($curl_response);
 			
-			var_dump($json_objekat);
+			if ($json_objekat != NULL) {
 
+                $page = $base . "cds/".$i;
+                if ($html = file_get_html($page)) {
 
-			/*/
-			$page = 'https://www.canticosccb.com.br/cds/'.$i;
-			if ($html = file_get_html($page)) {	
-				echo "CD: " . $i;
-				echo "<br>";
-				echo "Titulo: " . $html->find('.titulo',0)->plaintext;
-				echo "<br>";
-				$section = $html->find('dd'); 
-				foreach($section as $element) {
-					$texto = $element->plaintext;
+                    $cd_titulo = $html->find('.titulo',0)->plaintext;
+                    $dados = [];
+                    $section = $html->find('dd');
+                    foreach($section as $element) {
+                        $texto = $element->plaintext;
+                        if ($texto != "") {
+                            $dados[] = $texto;
+                        }
+                    }
 
-					if ($texto != "") {
-						echo $texto;
-						echo "<br>";
-					}
-				}
-				echo "<br>";
+                    $dataModel = array(
+                        'title' => $cd_titulo,
+                        'singer' => $dados[0],
+                        'category' => $dados[1],
+                        'volume' => $dados[2]
+                    );
 
-			} else {
-				echo "CD: ".$i." não encontrado";
-				echo "<br>";
-			}
-			/*/
+                    var_dump($dataModel);
+
+                    foreach ($json_objekat as $dado) {
+                        $dataModel = array(
+                            'id_cd' => 1,
+                            'title' => $dado->title,
+                            'url' => $base . $dado->url
+                        );
+                        var_dump($dataModel);
+                    }
+
+                    //$cd = $this->Crud_model->InsertId('');
+                    //$this->Crud_model->Insert('');
+
+                } else {
+                    echo "CD: ".$i." não encontrado";
+                    echo "<br>";
+                }
+            }
 		}
-
 	}
-
 }
