@@ -169,7 +169,7 @@ div#iphone div#camera span:nth-child(2) {
   height: 5px;
   width: 35px;
 }
-div#iphone div#screen {
+div#screen {
   background: #666666;
   border: 2px solid #f2f2f2;
   border-radius: 4px;
@@ -179,7 +179,7 @@ div#iphone div#screen {
   width: 225px;
   z-index: 1;
 }
-div#iphone div#screen::after {
+div#screen::after {
   background: gray;
   content: '';
   display: block;
@@ -196,7 +196,7 @@ div#iphone div#screen::after {
   -webkit-transform: rotate(-20deg);
   transform: rotate(-20deg);
 }
-div#iphone div#home-btn {
+div#home-btn {
   border: 3px solid #ececec;
   border-radius: 35px;
   cursor: pointer;
