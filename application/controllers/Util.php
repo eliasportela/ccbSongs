@@ -9,13 +9,13 @@ class Util extends CI_Controller {
 
 		require_once(APPPATH.'libraries/simple_html_dom.php');
 
-		$cd_inicio = 3000;
-		$cd_fim = 3000;
+		$cd_inicio = 3101;
+		$cd_fim = 4000;
 
 		for ($i=$cd_inicio; $i <= $cd_fim; $i++) {
 
-            $base = "http://www.canticosccb.com.br/";
-			$page = $base . "cds/'.$i.'/songs";
+            $base = "http://www.canticosccb.com.br";
+			$page = $base . "/cds/" . $i . "/songs";
 			
 	        $service_url = $page;
 	        $curl = curl_init($service_url);
@@ -30,8 +30,10 @@ class Util extends CI_Controller {
 			
 			if ($json_objekat != NULL) {
 
-                $page = $base . "cds/".$i;
+                $page = $base . "/cds/".$i;
                 if ($html = file_get_html($page)) {
+
+                    echo "Indexando CD: ".$i."\n";
 
                     $cd_titulo = $html->find('.titulo',0)->plaintext;
                     $dados = [];
@@ -45,29 +47,31 @@ class Util extends CI_Controller {
 
                     $dataModel = array(
                         'title' => $cd_titulo,
+                        'ref_cd' => $i,
                         'singer' => $dados[0],
                         'category' => $dados[1],
                         'volume' => $dados[2]
                     );
 
-                    var_dump($dataModel);
+                    $id_cd = $this->Crud_model->InsertId('cd',$dataModel);
 
-                    foreach ($json_objekat as $dado) {
-                        $dataModel = array(
-                            'id_cd' => 1,
-                            'title' => $dado->title,
-                            'url' => $base . $dado->url
-                        );
-                        var_dump($dataModel);
+                    if ($id_cd) {
+                        foreach ($json_objekat as $dado) {
+                            $dataModel = array(
+                                'id_cd' => $id_cd,
+                                'title' => $dado->title,
+                                'url' => $base . $dado->url
+                            );
+
+                            $this->Crud_model->Insert('hymn',$dataModel);
+                        }
                     }
 
-                    //$cd = $this->Crud_model->InsertId('');
-                    //$this->Crud_model->Insert('');
 
-                } else {
-                    echo "CD: ".$i." não encontrado";
-                    echo "<br>";
                 }
+
+            } else {
+                echo "CD: ".$i." não encontrado\n";
             }
 		}
 	}
