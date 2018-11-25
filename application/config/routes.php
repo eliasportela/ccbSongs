@@ -9,6 +9,7 @@ $route['api/cd/(:num)/(:any)'] = 'Hinos/GetCdHinos';
 $route['api/categorias/(:any)'] = 'Hinos/GetCategoriasHinos';
 
 $route['api/hino/(:num)/(:any)'] = 'Hinos/GetHino';
+$route['api/curtir/hino/(:num)/(:num)/(:any)'] = 'Hinos/LikeHino';
 
 // 404 e erros
 $route['404_override'] = '';

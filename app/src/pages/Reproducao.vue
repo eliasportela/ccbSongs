@@ -57,23 +57,30 @@
             <span class="tiny sublegenda">Compartilhar</span>
           </div>
           <div class="cell" style="width: 20%">
-            <i class="fa fa-heart-o"></i>
+            <i class="fa" :class="amei ? 'fa-heart active' : 'fa-heart-o'" @click="ameiHino"></i>
             <span class="tiny sublegenda">Amei</span>
           </div>
         </div>
       </div>
     </div>
+
+    <login :showModal="modalLogin" />
+
   </div>
 </template>
 
 <script>
   import CHeader from '../components/Header'
+  import Login from '../components/ModalLogin'
 
   export default {
-    components: {CHeader},
+    components: {CHeader,Login},
     name: "Home",
     data() {
       return {
+        token: "",
+        logado: false,
+        modalLogin: false,
         cd: [],
         hinos: [],
         selecionado: "",
@@ -84,12 +91,13 @@
         totalTime: "0:00",
         aleatorio: false,
         automatico: true,
+        amei: false,
         indice: 0
       }
     },
     methods: {
       getHinos() {
-        this.$http.get(base_url + 'cd/' + this.$route.params.id + '/' + token)
+        this.$http.get(base_url + 'cd/' + this.$route.params.id + '/' + this.token)
           .then(response => {
             this.cd = response.data;
             this.hinos = this.cd.hinos;
@@ -101,9 +109,11 @@
 
       selHino(h, indice) {
 
-        this.$http.get(base_url + 'hino/' + h.id_hymn + '/' + token)
+        this.$http.get(base_url + 'hino/' + h.id_hymn + '/' + this.token)
           .then(response => {
+            console.log(response.data.favorito);
             this.selecionado = h;
+            this.amei = response.data.favorito;
             this.player.setAttribute("src", h.url);
             this.indice = indice;
             this.tooglePlay();
@@ -185,10 +195,28 @@
 
       random() {
         return Math.floor((Math.random() * this.hinos.length - 1) + 1);
+      },
+
+      ameiHino() {
+        if (this.logado) {
+          this.$http.get(base_url + 'curtir/hino/' + 1 + '/' + this.selecionado.id_hymn + '/' + this.token)
+            .then(response => {
+              this.amei = true;
+            });
+        }
       }
     },
     mounted() {
       this.player = document.getElementById("elias");
+
+      if (sessionStorage.getItem('usuario') !== null) {
+        let dados = JSON.parse(sessionStorage.getItem('usuario'));
+        this.token = dados.token;
+        this.logado = true;
+
+      } else {
+        this.token = token;
+      }
 
       this.getHinos();
     }

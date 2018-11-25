@@ -10,9 +10,20 @@
 </template>
 
 <script>
-    export default {
-        name: "CHeader"
+  export default {
+    name: "CHeader",
+    methods: {
+      buscarUserLogado() {
+        if (sessionStorage.getItem('usuario')) {
+
+        }
+      }
+    },
+    mounted() {
+      this.buscarUserLogado();
     }
+
+  }
 </script>
 
 <style scoped>
