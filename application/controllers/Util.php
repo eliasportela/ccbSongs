@@ -9,8 +9,8 @@ class Util extends CI_Controller {
 
 		require_once(APPPATH.'libraries/simple_html_dom.php');
 
-		$cd_inicio = 3500;
-		$cd_fim = 4000;
+		$cd_inicio = 4000;
+		$cd_fim = 4050;
 
 		for ($i=$cd_inicio; $i <= $cd_fim; $i++) {
 

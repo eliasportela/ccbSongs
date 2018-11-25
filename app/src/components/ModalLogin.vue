@@ -1,56 +1,135 @@
 <template>
-  <div class="modal" :class="{'show':showModal}">
-    <div class="modal-content card-2 black padding padding-32">
-      <div class="container">
-        <div class="fechar" @click="fecharModais">
-          <i class="fa fa-times text-white"></i>
-        </div>
-        <div class="margin-bottom">
-          <img src="../assets/img/logo.png" class="image"/>
-        </div>
-        <form>
-          <div class="input-form">
-            <input type="text" class="light-gray round" v-model="dados.usuario" placeholder="Informe seu usuário"/>
-            <i class="fa fa-user text-black"></i>
+  <div>
+
+    <div class="modal" :class="{'show':modalInfo}">
+      <div class="modal-content card-2 round black padding padding-32">
+        <div class="container">
+          <div class="fechar" @click="fecharModais">
+            <i class="fa fa-times text-white"></i>
           </div>
-          <div class="input-form">
-            <input type="password" class="light-gray round" v-model="dados.senha" placeholder="Informe sua senha"/>
-            <i class="fa fa-lock text-black"></i>
+          <div style="margin-top: 40px">
+            <h4 class="center"><b>Bem vindo ao CCB Songs</b></h4>
+            <p class="margin-bottom">
+              Salve os seus hinos favoritos e depois escute-os na área de <b>Hinos Salvos</b>
+            </p>
+            <hr>
+            <a href="javascript:" class="button block border border-white round margin-bottom" @click="modalCadastro = true">Quero me cadastrar</a>
+            <a href="javascript:" class="button block border border-white round margin-bottom" @click="modalLogin = true">Fazer Login</a>
           </div>
-          <button type="button" class="button white block round login-btn" :disabled="(dados.usuario === '') || (dados.senha === '')" @click="logar(true)">
-            Login
-          </button>
-        </form>
-        <div class="margin-top center">
-          <hr>
-          <a href="#" class="button block border border-white round margin-bottom">Quero me cadastrar</a>
-          <a href="#">Esqueceu sua senha?</a>
         </div>
       </div>
     </div>
+
+    <div class="modal" :class="{'show':modalCadastro}">
+      <div class="modal-content card-2 round black padding">
+        <div class="container" style="padding-bottom: 16px">
+          <div class="fechar" @click="fecharModais">
+            <i class="fa fa-times text-white"></i>
+          </div>
+          <div class="margin-bottom">
+            <div style="margin-bottom: 24px">
+              <h4><b>Cadastro</b></h4>
+            </div>
+            <form class="margin-top">
+              <div class="input-form">
+                <input type="text" class="input border black" v-model="dados.usuario" placeholder="Informe seu e-mail"/>
+                <i class="fa fa-envelope text-white"></i>
+              </div>
+              <div class="input-form">
+                <input type="password" class="input border black" v-model="dados.senha" placeholder="Informe sua senha"/>
+                <i class="fa fa-lock text-white"></i>
+              </div>
+              <div class="input-form">
+                <input type="password" class="input border black" v-model="dados.senha" placeholder="Repita sua senha"/>
+                <i class="fa fa-lock text-white"></i>
+              </div>
+            </form>
+            <hr>
+            <a href="#" class="button block border border-white round">Cadastrar</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="modal" :class="{'show':modalLogin}">
+      <div class="modal-content card-2 round black padding">
+        <div class="container" style="padding-bottom: 16px">
+          <div class="fechar" @click="fecharModais">
+            <i class="fa fa-times text-white"></i>
+          </div>
+          <div class="margin-bottom">
+            <div style="margin-bottom: 24px">
+              <h4><b>Login</b></h4>
+            </div>
+            <form class="margin-top">
+              <div class="input-form">
+                <input type="text" class="input border black" v-model="dados.usuario" placeholder="Informe seu e-mail"/>
+                <i class="fa fa-envelope text-white"></i>
+              </div>
+              <div class="input-form">
+                <input type="password" class="input border black" v-model="dados.senha" placeholder="Informe sua senha"/>
+                <i class="fa fa-lock text-white"></i>
+              </div>
+            </form>
+            <hr>
+            <a href="#" class="button block border border-white round">Login</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script>
   export default {
     name: "modal-login",
-    props: {
-      showModal: Boolean
-    },
     data() {
       return {
         dados: {
           usuario: "",
           senha: ""
-        }
+        },
+        modalLogin: false,
+        modalCadastro: false,
+        modalEsqueceuSenha: false,
+        modalInfo: false
       }
     },
     methods: {
-      logar() {
+      showModal(modal) {
+        this.modalInfo = false;
+        this.modalCadastro = false;
+        this.modalEsqueceuSenha = false;
+        this.modalLogin = false;
+
+        switch (modal) {
+          case 1:
+            this.modalInfo = true;
+            break;
+          case 2:
+            this.modalCadastro = true;
+            break;
+          case 3:
+            this.modalLogin = true;
+            break;
+          case 4:
+            this.modalEsqueceuSenha = true;
+            break;
+        }
 
       },
+
       fecharModais() {
-        this.showModal = false;
+        this.modalInfo = false;
+        this.modalCadastro = false;
+        this.modalEsqueceuSenha = false;
+        this.modalLogin = false;
+      },
+
+      logar() {
+
       }
     }
   }
@@ -71,7 +150,6 @@
   }
   .input-form {
     margin: 12px 0 16px;
-    border-bottom: 1px solid #f44336;
     position: relative;
   }
   .input-form input{

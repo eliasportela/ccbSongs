@@ -56,15 +56,15 @@
             <i class="fa fa-share"></i>
             <span class="tiny sublegenda">Compartilhar</span>
           </div>
-          <div class="cell" style="width: 20%">
-            <i class="fa" :class="amei ? 'fa-heart active' : 'fa-heart-o'" @click="ameiHino"></i>
+          <div class="cell" style="width: 20%" @click="ameiHino">
+            <i class="fa" :class="amei ? 'fa-heart active' : 'fa-heart-o'"></i>
             <span class="tiny sublegenda">Amei</span>
           </div>
         </div>
       </div>
     </div>
 
-    <login :showModal="modalLogin" />
+    <login ref="login"/>
 
   </div>
 </template>
@@ -200,9 +200,12 @@
       ameiHino() {
         if (this.logado) {
           this.$http.get(base_url + 'curtir/hino/' + 1 + '/' + this.selecionado.id_hymn + '/' + this.token)
-            .then(response => {
+            .then(() => {
               this.amei = true;
             });
+
+        } else {
+          this.$refs.login.showModal(1);
         }
       }
     },
