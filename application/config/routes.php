@@ -5,6 +5,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'Util';
 $route['indexar'] = 'Util/Indexar';
 
+$route['api/register/(:any)'] = 'Usuarios/RegisterUser';
+
 $route['api/cd/(:num)/(:any)'] = 'Hinos/GetCdHinos';
 $route['api/categorias/(:any)'] = 'Hinos/GetCategoriasHinos';
 

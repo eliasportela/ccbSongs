@@ -17,7 +17,7 @@
             <a href="javascript:" class="button block border border-white round margin-bottom" @click="modalLogin = true">Fazer Login</a>
             <hr>
             <div class="margin-bottom">
-              <div class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="login_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false" data-onlogin=""></div>
+              <div class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="login_with" data-show-faces="false" data-auto-logout-link="true" data-use-continue-as="false" data-scope="email"></div>
             </div>
           </div>
         </div>
@@ -68,7 +68,7 @@
             </div>
             <form class="margin-top">
               <div class="input-form">
-                <input type="text" class="input border black" v-model="dados.usuario" placeholder="Informe seu e-mail"/>
+                <input type="text" class="input border black" v-model="dados.email" placeholder="Informe seu e-mail"/>
                 <i class="fa fa-envelope text-white"></i>
               </div>
               <div class="input-form">
@@ -92,8 +92,11 @@
     data() {
       return {
         dados: {
-          usuario: "",
-          senha: ""
+          email: "",
+          senha: "",
+          picture: "",
+          nome: "",
+          auth: ""
         },
         modalLogin: false,
         modalCadastro: false,
@@ -111,7 +114,8 @@
         switch (modal) {
           case 1:
             this.modalInfo = true;
-            window.checkLoginState = this.logarFacebook()
+            window.checkLoginState = this.logarFacebook();
+
             break;
           case 2:
             this.modalCadastro = true;
@@ -133,15 +137,34 @@
         this.modalLogin = false;
       },
 
-      logar() {
-
+      register() {
+        this.$http.post(base_url + 'register/' + token, this.dados, {emulateJSON: true})
+          .then(res => {
+            console.log(res);
+          });
       },
 
       logarFacebook() {
-        FB.getLoginStatus(function (response) {
-          console.log(response);
-          if (response === '') {
+
+        FB.getLoginStatus(res => {
+
+          if (res.status === 'connected') {
+
+            let userId = res.authResponse.userID;
+
+            FB.api(userId, { fields: ['email','name','picture.width(720)']}, user => {
+                if (user && !user.error) {
+                  this.dados.email = user.email;
+                  this.dados.nome = user.name;
+                  this.dados.senha = "";
+                  this.dados.picture = user.picture.data.url;
+                  this.dados.auth = userId;
+
+                  this.register();
+                }
+            });
           }
+
         });
       }
 
