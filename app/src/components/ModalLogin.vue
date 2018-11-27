@@ -111,11 +111,10 @@
         switch (modal) {
           case 1:
             this.modalInfo = true;
-            FB.getLoginStatus();
+            window.checkLoginState = this.logarFacebook()
             break;
           case 2:
             this.modalCadastro = true;
-            this.logarFacebook();
             break;
           case 3:
             this.modalLogin = true;
@@ -141,13 +140,14 @@
       logarFacebook() {
         FB.getLoginStatus(function (response) {
           console.log(response);
+          if (response === '') {
+          }
         });
       }
 
     },
 
     mounted(){
-      window.checkLoginState = this.logarFacebook()
     },
   }
 </script>
