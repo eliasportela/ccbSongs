@@ -7,14 +7,18 @@
           <div class="fechar" @click="fecharModais">
             <i class="fa fa-times text-white"></i>
           </div>
-          <div style="margin-top: 40px">
-            <h4 class="center"><b>Bem vindo ao CCB Songs</b></h4>
+          <div class="center" style="margin-top: 40px">
+            <h4><b>Bem vindo ao CCB Songs</b></h4>
             <p class="margin-bottom">
               Salve os seus hinos favoritos e depois escute-os na área de <b>Hinos Salvos</b>
             </p>
-            <hr>
+            <br>
             <a href="javascript:" class="button block border border-white round margin-bottom" @click="modalCadastro = true">Quero me cadastrar</a>
             <a href="javascript:" class="button block border border-white round margin-bottom" @click="modalLogin = true">Fazer Login</a>
+            <hr>
+            <div class="margin-bottom">
+              <div class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="login_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false" data-onlogin=""></div>
+            </div>
           </div>
         </div>
       </div>
@@ -45,7 +49,7 @@
               </div>
             </form>
             <hr>
-            <a href="#" class="button block border border-white round">Cadastrar</a>
+            <a href="#" class="button block border border-white round margin-bottom">Cadastrar</a>
           </div>
         </div>
       </div>
@@ -107,9 +111,11 @@
         switch (modal) {
           case 1:
             this.modalInfo = true;
+            FB.getLoginStatus();
             break;
           case 2:
             this.modalCadastro = true;
+            this.logarFacebook();
             break;
           case 3:
             this.modalLogin = true;
@@ -130,8 +136,19 @@
 
       logar() {
 
+      },
+
+      logarFacebook() {
+        FB.getLoginStatus(function (response) {
+          console.log(response);
+        });
       }
-    }
+
+    },
+
+    mounted(){
+      window.checkLoginState = this.logarFacebook()
+    },
   }
 </script>
 
