@@ -64,7 +64,7 @@
       </div>
     </div>
 
-    <login ref="login"/>
+    <login ref="login" @salvarHino="ameiHino"/>
 
   </div>
 </template>
@@ -80,6 +80,7 @@
       return {
         token: "",
         logado: false,
+        user: [],
         modalLogin: false,
         cd: [],
         hinos: [],
@@ -111,7 +112,6 @@
 
         this.$http.get(base_url + 'hino/' + h.id_hymn + '/' + this.token)
           .then(response => {
-            console.log(response.data.favorito);
             this.selecionado = h;
             this.amei = response.data.favorito;
             this.player.setAttribute("src", h.url);
@@ -198,29 +198,34 @@
       },
 
       ameiHino() {
+        this.verificarLogin();
+
         if (this.logado) {
-          this.$http.get(base_url + 'curtir/hino/' + 1 + '/' + this.selecionado.id_hymn + '/' + this.token)
+          this.$http.get(base_url + 'salvar/hino/' + this.selecionado.id_hymn + '/' + this.token)
             .then(() => {
-              this.amei = true;
+              this.amei = !this.amei;
             });
 
         } else {
           this.$refs.login.showModal(1);
+        }
+      },
+
+      verificarLogin() {
+        if (sessionStorage.getItem('usuario') !== null) {
+          this.user = JSON.parse(sessionStorage.getItem('usuario'));
+          this.token = this.user.chave;
+          this.logado = true;
+
+        } else {
+          this.token = token;
         }
       }
     },
     mounted() {
       this.player = document.getElementById("elias");
 
-      if (sessionStorage.getItem('usuario') !== null) {
-        let dados = JSON.parse(sessionStorage.getItem('usuario'));
-        this.token = dados.token;
-        this.logado = true;
-
-      } else {
-        this.token = token;
-      }
-
+      this.verificarLogin();
       this.getHinos();
     }
   }

@@ -83,9 +83,7 @@ class Hinos extends CI_Controller {
 
     public function GetHino(){
 
-        $chave = $this->uri->segment(4);
-        $nivel_acesso = 1;
-        $acesso_aprovado = $this->Crud_model->ValidarToken($chave, $nivel_acesso);
+        $acesso_aprovado = $this->Crud_model->ValidarToken($this->uri->segment(4), 1);
 
         if ($acesso_aprovado) {
 
@@ -94,7 +92,7 @@ class Hinos extends CI_Controller {
             if ($par) {
 
                 $hymn = $this->Crud_model->Read('hymn',array('id_hymn' => $par));
-                $favorito = $this->Crud_model->Read('favoritos_usuario', array('id_hymn' => $par));
+                $favorito = $this->Crud_model->Read('favoritos_usuario', array('id_hymn' => $par, 'id_usuario' => $acesso_aprovado));
 
                 if ($hymn) {
 
@@ -123,29 +121,30 @@ class Hinos extends CI_Controller {
 
     }
 
-    public function LikeHino(){
+    public function SalvarUserHino(){
 
-        //$chave = $this->uri->segment(4);
-        //$nivel_acesso = 1;
-        $acesso_aprovado = true; //$this->Crud_model->ValidarToken($chave, $nivel_acesso);
+        $acesso_aprovado = $this->Crud_model->ValidarToken($this->uri->segment(5), 2);
 
         if ($acesso_aprovado) {
 
-            $id_usuario = $this->uri->segment(4);
-            $id_hino = $this->uri->segment(5);
+            $id_usuario = $acesso_aprovado;
+            $id_hino = $this->uri->segment(4);
 
             $usuario = $this->Crud_model->Read('usuario', array('id_usuario' => $id_usuario));
             $hymn = $this->Crud_model->Read('hymn', array('id_hymn' => $id_hino));
 
             if ($usuario && $hymn) {
 
-                $this->Crud_model->Insert('favoritos_usuario', array('id_hymn' => $id_hino, 'id_usuario' => $id_usuario));
+                $res = $this->Crud_model->Read('favoritos_usuario', array('id_hymn' => $id_hino, 'id_usuario' => $id_usuario));
 
-                $res = array(
-                    'result' => "Sucesso"
-                );
+                if (!$res) {
+                    $this->Crud_model->Insert('favoritos_usuario', array('id_hymn' => $id_hino, 'id_usuario' => $id_usuario));
 
-                echo json_encode($res, JSON_UNESCAPED_UNICODE);;
+                } else {
+                    $this->Crud_model->Delete('favoritos_usuario', array('id_hymn' => $id_hino, 'id_usuario' => $id_usuario));
+                }
+
+                echo json_encode(array('result' => "Sucesso"), JSON_UNESCAPED_UNICODE);;
                 return;
 
             } else {

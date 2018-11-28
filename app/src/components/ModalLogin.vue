@@ -113,8 +113,10 @@
 
         switch (modal) {
           case 1:
-            this.modalInfo = true;
             window.checkLoginState = this.logarFacebook();
+
+            console.log(window.checkLoginState);
+            this.modalInfo = true;
 
             break;
           case 2:
@@ -140,8 +142,14 @@
       register() {
         this.$http.post(base_url + 'register/' + token, this.dados, {emulateJSON: true})
           .then(res => {
-            console.log(res);
+            this.logar(res);
+            this.$emit('salvarHino');
+            this.fecharModais();
           });
+      },
+
+      logar(res) {
+        sessionStorage.setItem('usuario', JSON.stringify(res.data));
       },
 
       logarFacebook() {
@@ -163,6 +171,7 @@
                   this.register();
                 }
             });
+
           }
 
         });

@@ -107,7 +107,7 @@ class Crud_model extends CI_Model
 
     public function ValidarToken($chave, $nivel_acesso){
 
-	    $sql = "SELECT u.administrativo, t.data_expiracao FROM token t INNER JOIN usuario u ON (t.id_usuario = u.id_usuario) WHERE t.chave = '".$chave."'";
+	    $sql = "SELECT u.administrativo, t.data_expiracao, t.id_usuario FROM token t INNER JOIN usuario u ON (t.id_usuario = u.id_usuario) WHERE t.chave = '".$chave."'";
         $query = $this->db->query($sql);
 	    $result = $query->result();
 
@@ -118,7 +118,7 @@ class Crud_model extends CI_Model
             $administrativo = $result[0]->administrativo;
 
             if ((strtotime($data_agora) < strtotime($data_expiracao)) && ($administrativo >= $nivel_acesso)) {
-                return true;
+                return $result[0]->id_usuario;
             }
 
         }
