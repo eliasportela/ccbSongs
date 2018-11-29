@@ -93,4 +93,42 @@ class Util extends CI_Controller {
             }
 		}
 	}
+
+	public function IndexarJson() {
+
+	    $cd_inicio = 750;
+        $cd_fim = 750;
+
+        for ($i=$cd_inicio; $i <= $cd_fim; $i++) {
+
+            $base = "http://www.canticosccb.com.br/radios/";
+            $page = $base . $i . "/cd.json";
+
+            $service_url = $page;
+            $curl = curl_init($service_url);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_POST, false);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+            $curl_response = curl_exec($curl);
+            curl_close($curl);
+
+            $json_objekat = json_decode($curl_response);
+
+            if ($json_objekat != NULL && !isset($json_objekat->status)) {
+                $cd = $this->Crud_model->Read('cd',array('ref_cd' => $i));
+
+                if (!$cd) {
+                    var_dump($json_objekat);
+
+                } else {
+                    echo "CD: " . $i . " ja se encontra cadastrado\n";
+                }
+
+            } else {
+                echo "CD: " . $i . " não encontrado\n";
+            }
+
+        }
+    }
 }
