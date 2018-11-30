@@ -189,14 +189,20 @@
 
       },
 
-      getCoficiente(position) {
-        let width = window.innerWidth;// - document.getElementById("slider").offsetWidth;
-        let slider = width / 2;
-        console.log((position / width) * 100);
+      getCoeficiente(position) {
+        let width = document.getElementById("slider").offsetWidth;
+        let padding = (window.innerWidth - width) / 2;
+
+        return (((position - padding)/ width) * 100);
       },
 
       rewind(event) {
-        this.getCoficiente(event.clientX);
+        //this.currentTime = this.formatTime(current);
+
+        let coeficiente = this.getCoeficiente(event.clientX);
+        //console.log(coeficiente);
+        //console.log(this.formatTime(coeficiente));
+
       },
 
       nextHino() {
@@ -234,8 +240,6 @@
       random() {
         return Math.floor((Math.random() * this.hinos.length - 1) + 1);
       },
-
-
 
       ameiHino() {
         this.verificarLogin();
