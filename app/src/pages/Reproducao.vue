@@ -3,10 +3,13 @@
     <c-header/>
     <div class="center" style="padding-top: 70px">
       <div style="padding-bottom: 200px">
-        <div class="padding" v-for="(h, index) in hinos">
-          <div class="left-align" :class="{'active':h===selecionado}" @click="selHino(h,index)" style="padding-left: 12px">
+        <div class="cell-row padding" v-for="(h, index) in hinos">
+          <div class="cell left-align" :class="{'active':h===selecionado}" @click="selHino(h,index)" style="padding-left: 12px;width: 90%">
               {{h.title}} <br>
             <span class="tiny">{{cd.singer}}</span>
+          </div>
+          <div class="cell cell-middle" style="width: 10%">
+            <i class="fa fa-spinner fa-pulse" v-show="load && h===selecionado"></i>
           </div>
         </div>
       </div>
@@ -29,9 +32,9 @@
           <div id="timeline">
             <span id="current-time">{{currentTime}}</span>
             <span id="total-time">{{totalTime}}</span>
-            <div class="slider" data-direction="horizontal">
+            <div id="slider" class="slider" data-direction="horizontal" @click="rewind">
               <div class="progress" :style="{'width':progress}">
-                <div class="pin" id="progress-pin" data-method="rewind"></div>
+                <div class="pin" id="progress-pin"></div>
               </div>
             </div>
           </div>
@@ -87,6 +90,7 @@
         hinos: [],
         selecionado: "",
         player: '',
+        load: true,
         paused: true,
         progress: '0',
         currentTime: "0:00",
@@ -129,6 +133,7 @@
       },
 
       selHino(h, indice) {
+        this.load = true;
         this.$http.get(base_url + 'hino/' + h.id_hymn + '/' + this.token)
           .then(response => {
             this.selecionado = h;
@@ -153,6 +158,7 @@
           this.player.addEventListener('loadedmetadata', () => {
             this.totalTime = this.formatTime(this.player.duration);
             this.paused = false;
+            this.load = false;
 
           });
 
@@ -181,6 +187,16 @@
 
         this.currentTime = this.formatTime(current);
 
+      },
+
+      getCoficiente(position) {
+        let width = window.innerWidth;// - document.getElementById("slider").offsetWidth;
+        let slider = width / 2;
+        console.log((position / width) * 100);
+      },
+
+      rewind(event) {
+        this.getCoficiente(event.clientX);
       },
 
       nextHino() {
@@ -218,6 +234,8 @@
       random() {
         return Math.floor((Math.random() * this.hinos.length - 1) + 1);
       },
+
+
 
       ameiHino() {
         this.verificarLogin();
