@@ -58,11 +58,11 @@
               <i class="fa fa-chevron-right"></i>
             </div>
           </div>
-          <div class="cell-row card padding padding-16 round margin-bottom">
+          <div class="cell-row card padding padding-16 round margin-bottom" @click="sair">
             <div class="cell">
               <span>Sair</span>
             </div>
-            <div class="cell cell-middle left-align" style="width: 5%" @click="sessionStorage.clear()">
+            <div class="cell cell-middle left-align" style="width: 5%">
               <i class="fa fa-sign-out"></i>
             </div>
           </div>
@@ -91,6 +91,10 @@
         if (sessionStorage.getItem('usuario')) {
           this.user = JSON.parse(sessionStorage.getItem('usuario'));
         }
+      },
+      sair() {
+        sessionStorage.clear();
+        this.menubar = false;
       }
     },
     mounted() {

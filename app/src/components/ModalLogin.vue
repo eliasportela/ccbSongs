@@ -55,6 +55,7 @@
       },
 
       register() {
+        console.log(this.dados);
         this.$http.post(base_url + 'register/' + token, this.dados, {emulateJSON: true})
           .then(res => {
             this.logar(res);
@@ -69,54 +70,47 @@
 
       logarFacebook() {
 
-        FB.Event.subscribe('auth.statusChange', function(response) {
-          console.log(response);
-        });
+        FB.getLoginStatus(response => {
+          if (response.status === 'connected') {
 
-        FB.getLoginStatus(function(response) {
-          console.log(response);
-          if (response !== 'connected') {
-            FB.login(function(response) {
-              if (response.authResponse) {
-                console.log(response);
+            let userId = response.authResponse.userID;
 
-              } else {
-                console.log('User cancelled login or did not fully authorize.');
+            FB.api(userId, { fields: ['email','name','picture.width(720)']}, user => {
+              if (user && !user.error) {
+                this.dados.email = user.email;
+                this.dados.nome = user.name;
+                this.dados.senha = "";
+                this.dados.picture = user.picture.data.url;
+                this.dados.auth = userId;
+                this.register();
               }
-            }, {
-              scope: 'email,name,picture.width(720)',
-              return_scopes: true
             });
-          } else {
-            console.log(response);
+
           }
+
         }, true);
 
-        // window.checkLoginState = FB.getLoginStatus(res => {
-        //
-        //   console.log(res);
-        //
-        //
-        //
-        //   if (res.status === 'connected') {
-        //
-        //     let userId = res.authResponse.userID;
-        //
-        //     FB.api(userId, { fields: ['email','name','picture.width(720)']}, user => {
-        //         if (user && !user.error) {
-        //           this.dados.email = user.email;
-        //           this.dados.nome = user.name;
-        //           this.dados.senha = "";
-        //           this.dados.picture = user.picture.data.url;
-        //           this.dados.auth = userId;
-        //
-        //           this.register();
-        //         }
-        //     });
-        //
-        //   }
-        //
-        // });
+        FB.Event.subscribe('auth.statusChange', response => {
+          if (response === 'connected') {
+            FB.login(res => {
+              if (response.authResponse) {
+                let userId = response.authResponse.userID;
+
+                FB.api(userId, { fields: ['email','name','picture.width(720)']}, user => {
+                  if (user && !user.error) {
+                    this.dados.email = user.email;
+                    this.dados.nome = user.name;
+                    this.dados.senha = "";
+                    this.dados.picture = user.picture.data.url;
+                    this.dados.auth = userId;
+                    this.register();
+                  }
+                });
+
+              }
+            });
+          }
+        });
       }
 
     },

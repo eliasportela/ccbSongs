@@ -34,7 +34,7 @@
           });
       },
       selCd(cd) {
-        this.$router.push("/reproducao/" + cd.id_cd);
+        this.$router.push("/reproducao/" + cd.id_cd + "/");
       }
     },
     mounted() {

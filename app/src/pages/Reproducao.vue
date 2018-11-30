@@ -15,14 +15,14 @@
           <span class="small">{{selecionado.title}}</span>
         </div>
         <div class="cell-row controlers">
-          <div class="cell cell-middle" style="width: 33%">
-            <i class="fa fa-step-backward" @click="backHino" style="font-size: 1.5em"></i>
+          <div class="cell cell-middle" style="width: 33%" @click="backHino">
+            <i class="fa fa-step-backward" style="font-size: 1.5em"></i>
           </div>
-          <div class="cell cell-middle" style="width: 33%">
-            <i class="fa" :class="paused ? 'fa-play' : 'fa-pause'" @click="tooglePlay" style="font-size: 3em"></i>
+          <div class="cell cell-middle" style="width: 33%" @click="tooglePlay">
+            <i class="fa" :class="paused ? 'fa-play' : 'fa-pause'" style="font-size: 3em"></i>
           </div>
-          <div class="cell cell-middle" style="width: 33%">
-            <i class="fa fa-step-forward" @click="nextHino" style="font-size: 1.5em"></i>
+          <div class="cell cell-middle" style="width: 33%" @click="nextHino">
+            <i class="fa fa-step-forward" style="font-size: 1.5em"></i>
           </div>
         </div>
         <div class="margin">
@@ -35,10 +35,11 @@
               </div>
             </div>
           </div>
-          <audio crossorigin id="elias">
+          <audio crossorigin id="audioplayer">
             <source src="" type="audio/mpeg">
           </audio>
         </div>
+
         <div class="cell-row cell-middle subcontroller">
           <div class="cell" style="width: 20%" :class="aleatorio ? 'active' : ''" @click="aleatorio = !aleatorio">
             <i class="fa fa-random"></i>
@@ -98,24 +99,45 @@
     },
     methods: {
       getHinos() {
+
         this.$http.get(base_url + 'cd/' + this.$route.params.id + '/' + this.token)
           .then(response => {
             this.cd = response.data;
             this.hinos = this.cd.hinos;
 
-            this.selHino(this.hinos[0],0);
+            if (location.hash !== "") {
+
+              let indice = 0;
+              let achou = false;
+              this.hinos.forEach(res => {
+                if (location.hash.includes(res.id_hymn)) {
+                  this.selHino(res,indice);
+                  achou = true;
+                }
+                indice++;
+              });
+
+              if (!achou) {
+                //this.$router.push("/");
+              }
+
+            } else {
+              this.selHino(this.hinos[0],0);
+            }
 
           });
       },
 
       selHino(h, indice) {
-
         this.$http.get(base_url + 'hino/' + h.id_hymn + '/' + this.token)
           .then(response => {
             this.selecionado = h;
             this.amei = response.data.favorito;
             this.player.setAttribute("src", h.url);
             this.indice = indice;
+
+            location.hash = "track=" + h.id_hymn;
+
             this.tooglePlay();
           });
       },
@@ -201,6 +223,7 @@
         this.verificarLogin();
 
         if (this.logado) {
+          console.log(this.token);
           this.$http.get(base_url + 'salvar/hino/' + this.selecionado.id_hymn + '/' + this.token)
             .then(() => {
               this.amei = !this.amei;
@@ -223,7 +246,7 @@
       }
     },
     mounted() {
-      this.player = document.getElementById("elias");
+      this.player = document.getElementById("audioplayer");
 
       this.verificarLogin();
       this.getHinos();

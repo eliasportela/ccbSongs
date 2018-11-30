@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 # Rotas do Tamplate
 $route['default_controller'] = 'Util';
-$route['indexar'] = 'Util/Indexar';
+$route['indexar'] = 'Util/IndexarCd';
 $route['indexar-json'] = 'Util/IndexarJson';
 
 $route['api/register/(:any)'] = 'Usuarios/RegisterUser';

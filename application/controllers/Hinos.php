@@ -17,7 +17,7 @@ class Hinos extends CI_Controller {
 
             if ($par) {
 
-                $sql = "SELECT c.id_cd, c.title, c.singer, ct.name as category, c.volume, c.visualizacao FROM cd c INNER JOIN category ct ON (c.id_category = ct.id_category) WHERE id_cd = $par";
+                $sql = "SELECT c.id_cd, c.title, s.name as singer, ct.name as category, c.visualizacao FROM cd c INNER JOIN category ct ON (c.id_category = ct.id_category) INNER JOIN singer s ON (c.id_singer = s.id_singer) WHERE id_cd = $par";
                 $cd = $this->Crud_model->Query($sql);
 
                 if ($cd) {
@@ -61,7 +61,7 @@ class Hinos extends CI_Controller {
                 $json = [];
                 foreach ($categorias as $c) {
 
-                    $sql = "SELECT id_cd, title FROM cd WHERE id_category = '$c->id_category'";
+                    $sql = "SELECT id_cd, title FROM cd WHERE id_category = '$c->id_category' ORDER BY qtd_canticos DESC";
                     $cds = $this->Crud_model->Query($sql);
 
                     $json[] = array_merge(((array)$c), array('cds' => $cds));

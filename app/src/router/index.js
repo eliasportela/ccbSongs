@@ -7,6 +7,7 @@ import Reproducao from '@/pages/Reproducao.vue'
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
@@ -14,9 +15,14 @@ export default new Router({
       component: Home
     },
     {
-      path: '/reproducao/:id',
+      path: '/reproducao/:id/',
       name: 'Reproducao',
       component: Reproducao
     }
+    // {
+    //   path: '/reproducao/:id/:hymn',
+    //   name: 'ReproducaoHino',
+    //   component: Reproducao
+    // }
   ]
 })
