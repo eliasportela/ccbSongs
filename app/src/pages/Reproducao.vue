@@ -172,6 +172,10 @@
             }
           });
 
+          this.player.addEventListener('onplaying', () => {
+            console.log("Play")
+          });
+
           this.player.play();
 
         } else {
@@ -197,11 +201,10 @@
       },
 
       rewind(event) {
-        //this.currentTime = this.formatTime(current);
-
         let coeficiente = this.getCoeficiente(event.clientX);
-        //console.log(coeficiente);
-        //console.log(this.formatTime(coeficiente));
+        let position = (coeficiente / 100) * this.player.duration;
+
+        this.player.currentTime = position;
 
       },
 
