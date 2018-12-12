@@ -109,7 +109,7 @@
             this.cd = response.data;
             this.hinos = this.cd.hinos;
 
-            if (location.hash !== "") {
+            if (this.$route.params.hymn !== undefined) {
 
               let indice = 0;
               let achou = false;
@@ -141,7 +141,7 @@
             this.player.setAttribute("src", h.url);
             this.indice = indice;
 
-            location.hash = "track=" + h.id_hymn;
+            this.$router.push("/reproducao/" + this.$route.params.id + "/" + h.id_hymn);
 
             this.tooglePlay();
           });
