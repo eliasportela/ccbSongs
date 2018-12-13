@@ -2,7 +2,7 @@
   <div>
 
     <div class="modal" :class="{'show':modalInfo}">
-      <div class="modal-content card-2 round black padding padding-32">
+      <div class="modal-content card-4 round black padding padding-32">
         <div class="container">
           <div class="fechar" @click="fecharModais">
             <i class="fa fa-times text-white"></i>
@@ -10,10 +10,11 @@
           <div class="center" style="margin-top: 40px">
             <h4><b>Bem vindo ao CCB Songs</b></h4>
             <p class="margin-bottom">
-              Salve os seus hinos favoritos e depois escute-os na área de <b>Hinos Salvos</b>
+              <span v-show="tipoModal === 1">Para acessar entre com sua conta do facebook</span>
+              <span v-show="tipoModal === 2">Salve os seus hinos favoritos e depois escute-os na área de <b>Hinos Salvos</b></span>
             </p>
             <hr>
-            <div class="margin-bottom cell-row padding blue round" @click="logarFacebook">
+            <div class="margin-bottom cell-row padding round card" style="background-color:#3b5998" @click="logarFacebook">
               <div class="cell cell-middle">
                 <i class="fa fa-facebook"></i>
               </div>
@@ -42,11 +43,13 @@
           auth: ""
         },
 
+        tipoModal: 1,
         modalInfo: false
       }
     },
     methods: {
-      showModal() {
+      showModal(n) {
+        this.tipoModal = n;
         this.modalInfo = true;
       },
 
@@ -55,12 +58,14 @@
       },
 
       register() {
-        console.log(this.dados);
         this.$http.post(base_url + 'register/' + token, this.dados, {emulateJSON: true})
           .then(res => {
             this.logar(res);
-            this.$emit('salvarHino');
             this.fecharModais();
+
+            if (this.tipoModal === 2) {
+              this.$emit('salvarHino');
+            }
           });
       },
 

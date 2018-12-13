@@ -255,7 +255,7 @@
             });
 
         } else {
-          this.$refs.login.showModal(1);
+          this.$refs.login.showModal(2);
         }
       },
 

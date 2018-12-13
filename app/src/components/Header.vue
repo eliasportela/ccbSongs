@@ -14,9 +14,10 @@
         <nav class="top cell-row card black" style="padding: 8px 2px 8px 20px">
           <div class="cell cell-middle" style="width: 50%">
             <span v-show="user !== ''">Meu Perfil</span>
+            <span v-show="user === ''">Menu</span>
           </div>
           <div class="cell cell-middle right-align" style="width: 50%" @click="menubar = false">
-            <button class="button"><span style="padding-right: 4px">Fechar</span><i class="fa fa-times"></i></button>
+            <button class="button"><i class="fa fa-times" style="font-size: 1.5em"></i></button>
           </div>
         </nav>
         <div class="container" style="padding-top: 70px">
@@ -43,7 +44,7 @@
               </div>
             </div>
           </div>
-          <div class="cell-row card padding round margin-bottom">
+          <div class="cell-row card padding round margin-bottom" v-show="user !== ''">
             <div class="cell">
               <span>Meus Hinos</span><br>
               <span class="tiny">Acesse todos os Hinos marcados como "Amei"</span>
