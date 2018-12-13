@@ -2,7 +2,8 @@
   <div>
     <nav class="top cell-row card black" style="padding: 8px 20px 8px 0">
       <div class="cell cell-middle left-align" style="width: 50%">
-        <button class="button" @click="$router.push('/')"><i class="fa fa-chevron-left"></i> <span style="padding-left: 4px">Home</span></button>
+        <button class="button" @click="$router.push('/')" v-show="voltar"><i class="fa fa-chevron-left"></i> <span style="padding-left: 4px">Home</span></button>
+        <button class="button" @click="$router.push('/')" v-show="!voltar"><span style="padding-left: 4px; font-family: cursive">CCB Songs</span></button>
       </div>
       <div class="cell cell-middle right-align" style="width: 50%" @click="abrirMenu">
         <img class="image" src="../assets/icons/menu.svg" style="width: 20px; height: 20px"/>
@@ -90,6 +91,9 @@
 <script>
   export default {
     name: "CHeader",
+    props: {
+      voltar: false
+    },
     data() {
       return {
         menubar: false,
