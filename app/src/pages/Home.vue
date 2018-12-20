@@ -1,7 +1,7 @@
 <template>
   <div>
     <c-header/>
-    <div style="padding: 65px 8px 20px">
+    <div style="padding:0 8px 20px">
       <div v-for="c in categorias">
         <div class="nome-categoria">{{c.category}}</div>
         <div class="cds">

@@ -12,7 +12,7 @@
     </div>
     <div class="cartao padding padding-32 center">
       <p><b>Para acessar crie sua conta. <br> É rápido, fácil e gratuito!</b></p>
-      <div class="padding round facebook" @click="$refs.login.showModal(1)">
+      <div class="padding round facebook" @click="$router.push('/login')">
         Criar minha conta
       </div>
       <div class="tiny margin-top"><a href="#">Já sou cadastrado</a></div>
@@ -42,27 +42,21 @@
       </div>
     </div>
 
-    <login ref="login" />
-
   </div>
 </template>
 
 <script>
   import CHeader from '../components/Header'
-  import Login from '../components/ModalLogin'
 
   export default {
     name: "Apresentacao",
-    components: {CHeader,Login},
+    components: {CHeader},
     data() {
       return {
         categorias: []
       }
     },
     methods: {
-      logarFacebook() {
-
-      }
     },
     mounted() {
 

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import Apresentacao from '@/pages/Apresentacao.vue'
+import Login from '@/pages/Login.vue'
 import Home from '@/pages/Home.vue'
 import Reproducao from '@/pages/Reproducao.vue'
 
@@ -14,6 +15,11 @@ export default new Router({
       path: '/',
       name: 'Apresentacao',
       component: Apresentacao
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
     },
     {
       path: '/home',
