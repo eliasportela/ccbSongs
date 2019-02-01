@@ -96,6 +96,9 @@
           this.progress = percent + "%";
 
           this.currentTime = this.formatTime(current);
+          if (percent >= 98) {
+            this.automatico ? setTimeout(this.nextHino(), 1000) : this.paused = true;
+          }
 
         },
 
@@ -179,14 +182,6 @@
         });
 
         this.player.addEventListener('timeupdate', this.updateProgress);
-
-        this.player.addEventListener('ended', () => {
-          if (this.automatico) {
-            this.nextHino();
-          } else {
-            this.paused = true;
-          }
-        });
 
         this.player.addEventListener('canplay', () => {
           this.paused = false;
