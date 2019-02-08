@@ -80,7 +80,7 @@
         <a href="#" style="padding-right: 15px">Termos de Uso</a> <a href="#">Privacidade</a>
       </div>
     </div>
-    <div style="margin-top: 55px">
+    <div style="padding-top: 55px">
     </div>
   </div>
 </template>
