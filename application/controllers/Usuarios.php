@@ -21,14 +21,13 @@ class Usuarios extends CI_Controller {
             $json = "";
 
             $nome = isset($data['nome']) ? $data['nome'] : "";
-            $senha = isset($data['senha']) ? $data['senha'] : "";
-            $picture = isset($data['picture']) ? $data['picture'] : "";
             $email = isset($data['email']) ? $data['email'] : "";
-            $auth = isset($data['auth']) ? $data['auth'] : "";
+            $senha = isset($data['senha']) ? $data['senha'] : "";
+
 
             $user = false;
-            if ($auth != "") {
-                $user = $this->Crud_model->Read('usuario', array('auth' => $auth));
+            if ($email != "") {
+                $user = $this->Crud_model->Read('usuario', array('email' => $email));
             }
 
             if (!$user) {
@@ -36,9 +35,7 @@ class Usuarios extends CI_Controller {
                 $dataModel = array(
                     'nome' => $nome,
                     'email' => $email,
-                    'senha' => $auth == "" ? $senha : null,
-                    'auth' => $auth,
-                    'picture' => $picture
+                    'senha' => $senha
                 );
 
                 $res = $this->User_model->Save($dataModel);
@@ -48,9 +45,46 @@ class Usuarios extends CI_Controller {
                 }
 
             } else {
-                $token = $this->User_model->getToken($user->id_usuario);
-                $json = array_merge(((array)$user), array('result' => 'success','chave' => $token));
 
+                $this->output->set_status_header('401');
+                $json = array('result' => 'Erro, o e-mail ja se encontra cadastrado.','chave' => null);
+                $json = json_encode($json, JSON_UNESCAPED_UNICODE);
+            }
+
+            echo $json;
+            return;
+
+        }
+
+        $this->output->set_status_header('401');
+
+    }
+
+    public function LoginUser() {
+
+        $chave = $this->uri->segment(3);
+        $acesso_aprovado = $this->Crud_model->ValidarToken($chave, 1);
+        $json = array();
+
+        if ($acesso_aprovado) {
+
+            $data = $this->input->post();
+
+            $email = isset($data['email']) ? $data['email'] : "";
+            $senha = isset($data['senha']) ? $data['senha'] : "";
+
+
+            if ($email != "" && $senha != "") {
+                $dataModel = array(
+                    'email' => $email,
+                    'senha' => $senha
+                );
+
+                $json = $this->User_model->Login($dataModel);
+
+
+            } else {
+                $this->output->set_status_header('401');
             }
 
             echo json_encode($json, JSON_UNESCAPED_UNICODE);

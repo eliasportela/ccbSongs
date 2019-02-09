@@ -21,14 +21,14 @@
           </div>
         </nav>
         <div class="container" style="padding-top: 70px">
-          <div class="center padding" v-show="user !== ''">
+          <!--<div class="center padding" v-show="user !== ''">
             <div class="margin-bottom" style="padding: 0 32%">
               <div class="card-2 border">
                 <img :src="user.picture" class="image"/>
               </div>
             </div>
             <div class="margin-bottom">{{user.nome}}</div>
-          </div>
+          </div>!-->
           <div class="cell-row card padding round margin-bottom" v-show="user !== ''" @click="irPagina('home')">
             <div class="cell">
               <span>Hinos</span><br>
@@ -40,8 +40,8 @@
           </div>
           <div class="cell-row card padding round margin-bottom" v-show="user !== ''">
             <div class="cell">
-              <span>Meus Hinos</span><br>
-              <span class="tiny">Acesse os Hinos favoritos</span>
+              <span>Minha PlayList</span><br>
+              <span class="tiny">Acesse seus Hinos favoritos</span>
             </div>
             <div class="cell cell-middle left-align" style="width: 5%">
               <i class="fa fa-chevron-right"></i>
