@@ -46,8 +46,8 @@ class Util extends CI_Controller {
 
 	public function IndexarJson() {
 
-	    $cd_inicio = 0;
-        $cd_fim = 1000;
+	    $cd_inicio = 4718;
+        $cd_fim = 5000;
 
         for ($i=$cd_inicio; $i <= $cd_fim; $i++) {
 
@@ -78,6 +78,10 @@ class Util extends CI_Controller {
                     $title = $dados->cd->name;
                     $categoria = $dados->cd->category;
                     $singer = $dados->cd->singer;
+
+                    if ($title == null || $categoria == null || $singer == null) {
+                        continue;
+                    }
 
                     $res = $this->Crud_model->Read('category', array('ref_category' => $categoria->name));
                     if ($res) {
@@ -124,6 +128,50 @@ class Util extends CI_Controller {
 
             } else {
                 echo "CD: " . $i . " não encontrado\n";
+            }
+
+        }
+    }
+
+    public function DownloadAudioFiles() {
+
+        $sql = "SELECT c.id_cd, c.title, h.id_hymn, h.url FROM cd c
+                INNER JOIN hymn h ON (c.id_cd = h.id_cd)
+                where qtd_canticos > 40000 and h.url like 'http%'
+                order by qtd_canticos asc limit 10";
+
+        $cds = $this->Crud_model->Query($sql);
+
+        echo "=====================================\n";
+        echo "Baixando cd: " . $cds[0]->title . "\n";
+        foreach ($cds as $hymn) {
+
+            echo "Baixando hino:" . $hymn->id_hymn . "\n";
+
+            $folderPath = 'assets/files/'.$hymn->id_cd;
+            if (!file_exists($folderPath)) {
+                mkdir($folderPath);
+            }
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $hymn->url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+            $data = curl_exec($ch);
+            curl_close($ch);
+
+            $filename = $folderPath . '/' . $hymn->id_cd . '_' . $hymn->id_hymn . ".mp3";
+            $fp = fopen($filename, 'w');
+            if ($fp != false){
+                fwrite($fp, $data);
+                fclose($fp);
+
+                $dataModel = array(
+                    'url' => $filename
+                );
+                $this->Crud_model->Update('hymn', $dataModel, array("id_hymn" => $hymn->id_hymn));
             }
 
         }
