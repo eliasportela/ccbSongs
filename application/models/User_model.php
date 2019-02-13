@@ -42,8 +42,27 @@ class User_model extends CI_Model
 	function Login($data) {
 		$par = array('email' => $data['email'], 'fg_ativo' => 1);
 		$this->db->select('*')->from('usuario')->where($par);
-		$results = $this->db->get()->result();
-		return $results;
+		$res = $this->db->get()->result();
+
+		if ($res) {
+
+            foreach($res as $result) {
+
+                if (password_verify($data['senha'], $result->senha)) {
+
+                    $token = $this->getToken($result->id_usuario);
+                    return array_merge(((array)$result), array('result' => 'success','chave' => $token));
+
+                } else {
+                    $this->output->set_status_header('401');
+                    return array('result' => 'Senha incorreta','chave' => null);
+                }
+            }
+
+        } else {
+            $this->output->set_status_header('401');
+            return array('result' => 'E-mail não cadastrado','chave' => null);
+        }
 	}
 
     function getToken($id_usuario) {
