@@ -33,8 +33,8 @@ class Util extends CI_Controller {
 	public function IndexarJson() {
         require_once(APPPATH.'libraries/simple_html_dom.php');
 
-	    $cd_inicio = 0;
-        $cd_fim = 1000;
+	    $cd_inicio = 1001;
+        $cd_fim = 10000;
 
         for ($i=$cd_inicio; $i <= $cd_fim; $i++) {
 
