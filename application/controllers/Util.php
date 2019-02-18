@@ -33,7 +33,7 @@ class Util extends CI_Controller {
 	public function IndexarJson() {
         require_once(APPPATH.'libraries/simple_html_dom.php');
 
-	    $cd_inicio = 970;
+	    $cd_inicio = 0;
         $cd_fim = 1000;
 
         for ($i=$cd_inicio; $i <= $cd_fim; $i++) {
@@ -103,7 +103,8 @@ class Util extends CI_Controller {
                             $dataModel = array(
                                 'id_cd' => $id_cd,
                                 'title' => $hino->name,
-                                'url' => $this->DownloadAudio($i,$base . $hino->song_file, rand(10000000, 100000000))
+                                'url' => $base . $hino->song_file,
+                                //'url' => $this->DownloadAudio($i,$base . $hino->song_file, rand(10000000, 100000000))
                             );
 
                             $this->Crud_model->Insert('hymn', $dataModel);
