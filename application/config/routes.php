@@ -7,7 +7,7 @@ $route['indexar'] = 'Util/IndexarCd';
 $route['indexar-json'] = 'Util/IndexarJson';
 
 $route['api/register/(:any)'] = 'Usuarios/RegisterUser';
-$route['api/login/(:any)'] = 'Usuarios/LoginUser';
+$route['api/login'] = 'Usuarios/LoginUser';
 
 $route['api/cd/(:num)/(:any)'] = 'Hinos/GetCdHinos';
 $route['api/categorias/(:any)'] = 'Hinos/GetCategoriasHinos';

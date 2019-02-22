@@ -62,12 +62,29 @@ class Usuarios extends CI_Controller {
 
     public function LoginUser() {
 
-        $chave = $this->uri->segment(3);
-        $acesso_aprovado = $this->Crud_model->ValidarToken($chave, 1);
         $json = array();
 
-        if ($acesso_aprovado) {
+        if ($this->input->get('chave') != null) {
 
+            $chave = $this->input->get('chave');
+            $acesso_aprovado = $this->Crud_model->ValidarToken($chave, 1);
+
+            if ($acesso_aprovado) {
+                $usuario = $this->Crud_model->Read('usuario', array('id_usuario' => $acesso_aprovado));
+
+                $usuario = array(
+                    'nome' => $usuario->nome,
+                    'email' => $usuario->email
+                );
+
+                $json = array_merge($usuario, array('result' => 'success','chave' => $chave));
+
+            } else {
+                $json = array_merge([], array('result' => 'Sessão expirada! Faça o login novamente','chave' => null));
+                $this->output->set_status_header('401');
+            }
+
+        } else {
             $data = $this->input->post();
 
             $email = isset($data['email']) ? $data['email'] : "";
@@ -82,17 +99,12 @@ class Usuarios extends CI_Controller {
 
                 $json = $this->User_model->Login($dataModel);
 
-
             } else {
                 $this->output->set_status_header('401');
             }
-
-            echo json_encode($json, JSON_UNESCAPED_UNICODE);
-            return;
-
         }
 
-        $this->output->set_status_header('401');
+        echo json_encode($json, JSON_UNESCAPED_UNICODE);
 
     }
 

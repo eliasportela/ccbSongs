@@ -51,7 +51,13 @@ class User_model extends CI_Model
                 if (password_verify($data['senha'], $result->senha)) {
 
                     $token = $this->getToken($result->id_usuario);
-                    return array_merge(((array)$result), array('result' => 'success','chave' => $token));
+
+                    $usuario = array(
+                        'nome' => $result->nome,
+                        'email' => $result->email
+                    );
+
+                    return array_merge($usuario, array('result' => 'success','chave' => $token));
 
                 } else {
                     $this->output->set_status_header('401');
