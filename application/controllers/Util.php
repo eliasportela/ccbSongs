@@ -5,49 +5,36 @@ header('Access-Control-Allow-Origin: *');
 
 class Util extends CI_Controller {
 
-	public function IndexarCd() {
+	public function IndexarRefQtdCd($ref) {
 
-		require_once(APPPATH.'libraries/simple_html_dom.php');
+        $base = "http://www.canticosccb.com.br";
+        $page = $base . "/cds/" . $ref;
 
-		$cd_inicio = 0;
-		$limit = 1000;
+        if ($html = file_get_html($page)) {
 
-		$sql = "SELECT ref_cd FROM cd WHERE fg_ativo = 1 LIMIT $limit OFFSET $cd_inicio";
-        $cds = $this->Crud_model->Query($sql);
+            echo "Referencia de quantidades cd: " . $ref . "\n";
 
-		foreach ($cds as $cd) {
-
-            $base = "http://www.canticosccb.com.br";
-
-            $ref = $cd->ref_cd;
-            $page = $base . "/cds/" . $ref;
-
-            if ($html = file_get_html($page)) {
-
-                echo "Indexando CD: " . $ref . "\n";
-
-                $dados = [];
-                $section = $html->find('dd');
-                foreach ($section as $element) {
-                    $dados[] = $element->plaintext;
-                }
-
-                $dataModel = array(
-                    'qtd_canticos' => $dados[6]
-                );
-
-                $this->Crud_model->Update('cd', $dataModel, array("ref_cd" => $ref));
-
-            } else {
-                echo "CD: " . $ref . " não encontrado\n";
+            $dados = [];
+            $section = $html->find('dd');
+            foreach ($section as $element) {
+                $dados[] = $element->plaintext;
             }
+
+            return $dados[6];
+
+        } else {
+            echo "CD: " . $ref . " não encontrado\n";
         }
+
+        return null;
+
 	}
 
 	public function IndexarJson() {
+        require_once(APPPATH.'libraries/simple_html_dom.php');
 
-	    $cd_inicio = 4718;
-        $cd_fim = 5000;
+	    $cd_inicio = 1001;
+        $cd_fim = 10000;
 
         for ($i=$cd_inicio; $i <= $cd_fim; $i++) {
 
@@ -103,7 +90,8 @@ class Util extends CI_Controller {
                         'title' => $title,
                         'ref_cd' => $i,
                         'id_singer' => $singer,
-                        'id_category' => $categoria
+                        'id_category' => $categoria,
+                        'qtd_canticos' => $this->IndexarRefQtdCd($i)
                     );
 
 
@@ -115,7 +103,8 @@ class Util extends CI_Controller {
                             $dataModel = array(
                                 'id_cd' => $id_cd,
                                 'title' => $hino->name,
-                                'url' => $base . $hino->song_file
+                                'url' => $base . $hino->song_file,
+                                //'url' => $this->DownloadAudio($i,$base . $hino->song_file, rand(10000000, 100000000))
                             );
 
                             $this->Crud_model->Insert('hymn', $dataModel);
@@ -175,5 +164,35 @@ class Util extends CI_Controller {
             }
 
         }
+    }
+
+    public function DownloadAudio($ref, $url, $idHino) {
+
+	    $folderPath = 'assets/files/'.$ref;
+        if (!file_exists($folderPath)) {
+            mkdir($folderPath);
+        }
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        $data = curl_exec($ch);
+        curl_close($ch);
+
+        $filename = $folderPath . '/' . $ref . '_' . $idHino . ".mp3";
+        $fp = fopen($filename, 'w');
+        if ($fp != false){
+            fwrite($fp, $data);
+            fclose($fp);
+
+            return "/" . $filename;
+
+        }
+
+        return null;
+
     }
 }
