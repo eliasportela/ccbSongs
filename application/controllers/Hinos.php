@@ -7,9 +7,7 @@ class Hinos extends CI_Controller {
 
 	public function GetCdHinos(){
 
-        //$chave = $this->uri->segment(4);
-        //$nivel_acesso = 1;
-        $acesso_aprovado = true; //$this->Crud_model->ValidarToken($chave, $nivel_acesso);
+        $acesso_aprovado = $this->Crud_model->ValidarToken($this->uri->segment(4), 1);
 
         if ($acesso_aprovado) {
 
@@ -17,14 +15,12 @@ class Hinos extends CI_Controller {
 
             if ($par) {
 
-                $sql = "SELECT c.id_cd, c.title, s.name as singer, ct.name as category, c.visualizacao FROM cd c INNER JOIN category ct ON (c.id_category = ct.id_category) INNER JOIN singer s ON (c.id_singer = s.id_singer) WHERE id_cd = $par";
+                $sql = "SELECT c.id_cd, c.title, s.name as singer, ct.name as category FROM cd c INNER JOIN category ct ON (c.id_category = ct.id_category) INNER JOIN singer s ON (c.id_singer = s.id_singer) WHERE id_cd = $par";
                 $cd = $this->Crud_model->Query($sql);
 
                 if ($cd) {
-                    $dataModel = array('visualizacao' => $cd[0]->visualizacao + 1);
-                    $this->Crud_model->Update('cd',$dataModel,array('id_cd' => $par));
 
-                    $sql = "SELECT id_hymn, title, url, visualizacao FROM hymn WHERE id_cd = $par";
+                    $sql = "SELECT id_hymn, title, url FROM hymn WHERE id_cd = $par";
                     $hinos = $this->Crud_model->Query($sql);
 
                     $json = array_merge(((array)$cd[0]), array('hinos' => $hinos));
@@ -96,18 +92,16 @@ class Hinos extends CI_Controller {
 
                 if ($hymn) {
 
-                    $dataModel = array('visualizacao' => $hymn->visualizacao + 1);
-                    $this->Crud_model->Update('hymn',$dataModel,array('id_hymn' => $par));
+                    $this->Crud_model->Insert('historico_usuario', array('id_hymn' => $par,'id_usuario' => $acesso_aprovado));
 
                     $hymn = array(
                         'id_hymn' => $hymn->id_hymn,
                         'title' => $hymn->title,
                         'url' => $hymn->url,
-                        'favorito' => ($favorito !== FALSE),
-                        'visualizacao' => $hymn->visualizacao + 1
+                        'favorito' => ($favorito !== FALSE)
                     );
 
-                    echo json_encode($hymn, JSON_UNESCAPED_UNICODE);;
+                    echo json_encode($hymn, JSON_UNESCAPED_UNICODE);
                     return;
 
                 } else {
