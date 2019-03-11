@@ -24,7 +24,7 @@ class User_model extends CI_Model
             $token = $this->getToken($res);
 
             if ($token !== FALSE) {
-                return array_merge($data, array('result' => 'success','chave' => $token));
+                return array('result' => 'success','chave' => $token);
             }
 
 		}
@@ -49,15 +49,8 @@ class User_model extends CI_Model
             foreach($res as $result) {
 
                 if (password_verify($data['senha'], $result->senha)) {
-
                     $token = $this->getToken($result->id_usuario);
-
-                    $usuario = array(
-                        'nome' => $result->nome,
-                        'email' => $result->email
-                    );
-
-                    return array_merge($usuario, array('result' => 'success','chave' => $token));
+                    return array('result' => 'success','chave' => $token);
 
                 } else {
                     $this->output->set_status_header('401');
@@ -65,10 +58,11 @@ class User_model extends CI_Model
                 }
             }
 
-        } else {
-            $this->output->set_status_header('401');
-            return array('result' => 'E-mail não cadastrado','chave' => null);
         }
+
+        $this->output->set_status_header('401');
+        return array('result' => 'E-mail não cadastrado','chave' => null);
+
 	}
 
     function getToken($id_usuario) {

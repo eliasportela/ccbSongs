@@ -12,25 +12,15 @@ class Usuarios extends CI_Controller {
 
     public function RegisterUser() {
 
-        $chave = $this->uri->segment(3);
-        $acesso_aprovado = $this->Crud_model->ValidarToken($chave, 1);
+        $data = $this->input->post();
+        $nome = isset($data['nome']) ? $data['nome'] : false;
+        $email = isset($data['email']) ? $data['email'] : false;
+        $senha = isset($data['senha']) ? $data['senha'] : false;
+        $json = array('result' => 'Erro nos parâmetros passados!');
 
-        if ($acesso_aprovado) {
+        if ($nome && $email && $senha) {
 
-            $data = $this->input->post();
-            $json = "";
-
-            $nome = isset($data['nome']) ? $data['nome'] : "";
-            $email = isset($data['email']) ? $data['email'] : "";
-            $senha = isset($data['senha']) ? $data['senha'] : "";
-
-
-            $user = false;
-            if ($email != "") {
-                $user = $this->Crud_model->Read('usuario', array('email' => $email));
-            }
-
-            if (!$user) {
+            if (!$this->Crud_model->Read('usuario', array('email' => $email))) {
 
                 $dataModel = array(
                     'nome' => $nome,
@@ -41,67 +31,38 @@ class Usuarios extends CI_Controller {
                 $res = $this->User_model->Save($dataModel);
 
                 if ($res) {
-                    $json = json_encode($res, JSON_UNESCAPED_UNICODE);
+                    $json = $res;
                 }
 
             } else {
 
                 $this->output->set_status_header('401');
-                $json = array('result' => 'Erro, o e-mail ja se encontra cadastrado.','chave' => null);
-                $json = json_encode($json, JSON_UNESCAPED_UNICODE);
+                $json = array('result' => 'Erro, o e-mail ja se encontra cadastrado.', 'chave' => null);
             }
-
-            echo $json;
-            return;
-
         }
 
-        $this->output->set_status_header('401');
+        $json = json_encode($json, JSON_UNESCAPED_UNICODE);
+        echo $json;
 
     }
 
     public function LoginUser() {
 
-        $json = array();
+        $json = array('result' => 'Erro nos parâmetros passados!');
+        $data = $this->input->post();
+        $email = isset($data['email']) ? $data['email'] : "";
+        $senha = isset($data['senha']) ? $data['senha'] : "";
 
-        if ($this->input->get('chave') != null) {
+        if ($email != "" && $senha != "") {
+            $dataModel = array(
+                'email' => $email,
+                'senha' => $senha
+            );
 
-            $chave = $this->input->get('chave');
-            $acesso_aprovado = $this->Crud_model->ValidarToken($chave, 1);
-
-            if ($acesso_aprovado) {
-                $usuario = $this->Crud_model->Read('usuario', array('id_usuario' => $acesso_aprovado));
-
-                $usuario = array(
-                    'nome' => $usuario->nome,
-                    'email' => $usuario->email
-                );
-
-                $json = array_merge($usuario, array('result' => 'success','chave' => $chave));
-
-            } else {
-                $json = array_merge([], array('result' => 'Sessão expirada! Faça o login novamente','chave' => null));
-                $this->output->set_status_header('401');
-            }
+            $json = $this->User_model->Login($dataModel);
 
         } else {
-            $data = $this->input->post();
-
-            $email = isset($data['email']) ? $data['email'] : "";
-            $senha = isset($data['senha']) ? $data['senha'] : "";
-
-
-            if ($email != "" && $senha != "") {
-                $dataModel = array(
-                    'email' => $email,
-                    'senha' => $senha
-                );
-
-                $json = $this->User_model->Login($dataModel);
-
-            } else {
-                $this->output->set_status_header('401');
-            }
+            $this->output->set_status_header('400');
         }
 
         echo json_encode($json, JSON_UNESCAPED_UNICODE);
@@ -118,5 +79,28 @@ class Usuarios extends CI_Controller {
 
     public function UpdatePassword() {
 
+    }
+
+    public function GetUser() {
+
+        $chave = $this->uri->segment(3);
+        $acesso_aprovado = $this->Crud_model->ValidarToken($chave, 1);
+
+        $json = array('result' => 'Sessão expirada. Faça o login novamente!');
+        $json = json_encode($json, JSON_UNESCAPED_UNICODE);
+
+        if ($acesso_aprovado) {
+
+            $user = $this->Crud_model->Query("SELECT id_usuario, nome, email, picture, administrativo FROM usuario WHERE id_usuario = $acesso_aprovado");
+
+            if ($user) {
+                $json = json_encode($user[0], JSON_UNESCAPED_UNICODE);
+            }
+
+        } else {
+            $this->output->set_status_header('401');
+        }
+
+        echo $json;
     }
 }

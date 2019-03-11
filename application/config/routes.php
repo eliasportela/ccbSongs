@@ -6,8 +6,9 @@ $route['default_controller'] = 'Util';
 $route['indexar'] = 'Util/IndexarCd';
 $route['indexar-json'] = 'Util/IndexarJson';
 
-$route['api/register/(:any)'] = 'Usuarios/RegisterUser';
 $route['api/login'] = 'Usuarios/LoginUser';
+$route['api/register'] = 'Usuarios/RegisterUser';
+$route['api/usuario/(:any)'] = 'Usuarios/GetUser';
 
 $route['api/cd/(:num)/(:any)'] = 'Hinos/GetCdHinos';
 $route['api/categorias/(:any)'] = 'Hinos/GetCategoriasHinos';

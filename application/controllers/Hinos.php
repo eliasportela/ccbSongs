@@ -47,8 +47,6 @@ class Hinos extends CI_Controller {
 
         if ($acesso_aprovado) {
 
-            //die(var_dump("rw"));
-
             $sql = "SELECT id_category, name as category FROM category WHERE fg_ativo = 1";
             $categorias = $this->Crud_model->Query($sql);
 
@@ -57,7 +55,7 @@ class Hinos extends CI_Controller {
                 $json = [];
                 foreach ($categorias as $c) {
 
-                    $sql = "SELECT id_cd, title FROM cd WHERE id_category = '$c->id_category' ORDER BY qtd_canticos DESC";
+                    $sql = "SELECT id_cd, title FROM cd WHERE id_category = '$c->id_category' ORDER BY qtd_canticos DESC LIMIT 20";
                     $cds = $this->Crud_model->Query($sql);
 
                     $json[] = array_merge(((array)$c), array('cds' => $cds));
