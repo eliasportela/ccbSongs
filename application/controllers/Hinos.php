@@ -5,6 +5,11 @@ header('Access-Control-Allow-Origin: *');
 
 class Hinos extends CI_Controller {
 
+    function __construct() {
+        parent::__construct();
+        $this->output->set_content_type('application/json');
+    }
+
 	public function GetCdHinos(){
 
         $acesso_aprovado = $this->Crud_model->ValidarToken($this->uri->segment(4), 1);
@@ -41,9 +46,8 @@ class Hinos extends CI_Controller {
 
     public function GetCategoriasHinos(){
 
-        //$chave = $this->uri->segment(4);
-        //$nivel_acesso = 1;
-        $acesso_aprovado = true; //$this->Crud_model->ValidarToken($chave, $nivel_acesso);
+        $chave = $this->uri->segment(4);
+        $acesso_aprovado = $this->Crud_model->ValidarToken($chave, 1);
 
         if ($acesso_aprovado) {
 
@@ -72,6 +76,55 @@ class Hinos extends CI_Controller {
         }
 
         $this->output->set_status_header('401');
+
+    }
+
+    public function GetCategoria(){
+
+        $chave = $this->uri->segment(3);
+        $acesso_aprovado = $this->Crud_model->ValidarToken($chave, 1);
+        $json = array('result' => 'Sessão expirada! Faça o login novamente');
+
+        if ($acesso_aprovado) {
+
+            $data = $this->input->get();
+
+            $id_categoria = isset($data['id_category']) ? $data['id_category'] : null;
+            $page = isset($data['page']) ? $data['page'] : 1;
+
+            $json = array('result' => 'Erro nos parâmetros passados!');
+            if ($id_categoria != null) {
+
+                $sql = $this->Crud_model->Query("SELECT count(*) as qtd FROM cd WHERE id_category = $id_categoria and fg_ativo = 1");
+                $pages = round($sql[0]->qtd / 5);
+
+                $sql = $this->Crud_model->Query("SELECT id_category, name as category FROM category WHERE id_category = $id_categoria and fg_ativo = 1");
+
+                if ($sql) {
+                    $categorias = (array)$sql[0];
+
+                    $page = $page > 0 ? $page - 1 : 0;
+                    $sql = "SELECT id_cd, title FROM cd WHERE id_category = $id_categoria ORDER BY qtd_canticos DESC LIMIT 5 offset ". ($page * 5);
+                    $cds = $this->Crud_model->Query($sql);
+
+                    $categorias = array_merge($categorias,array('page' => $page + 1,'total_pages' => $pages > 0 ? $pages : 1));
+
+                    if (!$cds){
+                        $cds = [];
+                    }
+
+                    $json = array_merge($categorias, array('cds' => $cds));
+
+                } else {
+                    $this->output->set_status_header('204');
+                }
+            }
+
+        } else {
+            $this->output->set_status_header('401');
+        }
+
+        echo json_encode($json, JSON_UNESCAPED_UNICODE);
 
     }
 
