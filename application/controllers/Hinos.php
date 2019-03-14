@@ -46,7 +46,7 @@ class Hinos extends CI_Controller {
 
     public function GetCategoriasHinos(){
 
-        $chave = $this->uri->segment(4);
+        $chave = $this->uri->segment(3);
         $acesso_aprovado = $this->Crud_model->ValidarToken($chave, 1);
 
         if ($acesso_aprovado) {
@@ -96,7 +96,7 @@ class Hinos extends CI_Controller {
             if ($id_categoria != null) {
 
                 $sql = $this->Crud_model->Query("SELECT count(*) as qtd FROM cd WHERE id_category = $id_categoria and fg_ativo = 1");
-                $pages = round($sql[0]->qtd / 5);
+                $pages = round($sql[0]->qtd / 20);
 
                 $sql = $this->Crud_model->Query("SELECT id_category, name as category FROM category WHERE id_category = $id_categoria and fg_ativo = 1");
 
@@ -104,7 +104,12 @@ class Hinos extends CI_Controller {
                     $categorias = (array)$sql[0];
 
                     $page = $page > 0 ? $page - 1 : 0;
-                    $sql = "SELECT id_cd, title FROM cd WHERE id_category = $id_categoria ORDER BY qtd_canticos DESC LIMIT 5 offset ". ($page * 5);
+
+                    $sql = "SELECT c.id_cd, c.title, s.name as singer, ct.name as category 
+                            FROM cd c INNER JOIN category ct ON (c.id_category = ct.id_category) 
+                            INNER JOIN singer s ON (c.id_singer = s.id_singer)
+                            WHERE c.id_category = $id_categoria ORDER BY c.qtd_canticos DESC LIMIT 20 offset ". ($page * 20);
+
                     $cds = $this->Crud_model->Query($sql);
 
                     $categorias = array_merge($categorias,array('page' => $page + 1,'total_pages' => $pages > 0 ? $pages : 1));
