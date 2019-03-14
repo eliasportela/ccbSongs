@@ -105,8 +105,8 @@ class Hinos extends CI_Controller {
 
                     $page = $page > 0 ? $page - 1 : 0;
 
-                    $sql = "SELECT c.id_cd, c.title, s.name as singer, ct.name as category 
-                            FROM cd c INNER JOIN category ct ON (c.id_category = ct.id_category) 
+                    $sql = "SELECT c.id_cd, c.title, s.name as singer
+                            FROM cd c
                             INNER JOIN singer s ON (c.id_singer = s.id_singer)
                             WHERE c.id_category = $id_categoria ORDER BY c.qtd_canticos DESC LIMIT 20 offset ". ($page * 20);
 
