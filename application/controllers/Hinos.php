@@ -133,6 +133,58 @@ class Hinos extends CI_Controller {
 
     }
 
+    public function GetBusca(){
+
+        $chave = $this->uri->segment(4);
+        $acesso_aprovado = $this->Crud_model->ValidarToken($chave, 1);
+        $json = array('result' => 'Sessão expirada! Faça o login novamente');
+
+        if ($acesso_aprovado) {
+            $json = array('result' => 'Erro nos parâmetros passados!');
+
+            $data = $this->input->get();
+            $query = isset($data['query']) ? $data['query'] : null;
+            $page = isset($data['page']) ? $data['page'] : 0;
+
+            if ($query != null) {
+                $page = $page > 0 ? $page - 1 : 0;
+
+                $query = "'%" . $query . "%'";
+                $sql = $this->Crud_model->Query(
+                    "SELECT count(id_cd) as qtd FROM cd
+                        INNER JOIN category c ON (c.id_category = cd.id_category)
+                        INNER JOIN singer s ON (s.id_singer = cd.id_singer)
+                        WHERE cd.title like $query || c.name like $query || s.name like $query"
+                );
+
+                $pages = round($sql[0]->qtd / 20);
+
+                $sql = "SELECT cd.id_cd, cd.title, s.name as singer FROM cd
+                            INNER JOIN category c ON (c.id_category = cd.id_category)
+                            INNER JOIN singer s ON (s.id_singer = cd.id_singer)
+                            WHERE cd.title like $query || c.name like $query || s.name like $query
+                            ORDER BY cd.qtd_canticos DESC LIMIT 20 offset ". ($page * 20);
+
+                $cds = $this->Crud_model->Query($sql);
+
+                if (!$cds){
+                    $cds = [];
+                }
+                $json = array_merge(array('page' => $page + 1,'total_pages' => $pages > 0 ? $pages : 1),array('cds' => $cds));
+
+            } else {
+                $this->output->set_status_header('204');
+            }
+
+
+        } else {
+            $this->output->set_status_header('401');
+        }
+
+        echo json_encode($json, JSON_UNESCAPED_UNICODE);
+
+    }
+
     public function GetHino(){
 
         $acesso_aprovado = $this->Crud_model->ValidarToken($this->uri->segment(4), 1);
