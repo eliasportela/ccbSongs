@@ -15,6 +15,7 @@ $route['api/favoritos/(:any)'] = 'Hinos/GetFavoritos';
 $route['api/cd/(:num)/(:any)'] = 'Hinos/GetCdHinos';
 $route['api/categorias/(:any)'] = 'Hinos/GetCategoriasHinos';
 $route['api/categoria/(:any)'] = 'Hinos/GetCategoria';
+$route['api/cd/busca/(:any)'] = 'Hinos/GetBusca';
 
 $route['api/hino/(:num)/(:any)'] = 'Hinos/GetHino';
 $route['api/salvar/hino/(:num)/(:any)'] = 'Hinos/SalvarUserHino';
