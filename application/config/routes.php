@@ -10,6 +10,8 @@ $route['api/login'] = 'Usuarios/LoginUser';
 $route['api/register'] = 'Usuarios/RegisterUser';
 $route['api/usuario/(:any)'] = 'Usuarios/GetUser';
 
+$route['api/favoritos/(:any)'] = 'Hinos/GetFavoritos';
+
 $route['api/cd/(:num)/(:any)'] = 'Hinos/GetCdHinos';
 $route['api/categorias/(:any)'] = 'Hinos/GetCategoriasHinos';
 $route['api/categoria/(:any)'] = 'Hinos/GetCategoria';

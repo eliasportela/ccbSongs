@@ -44,6 +44,27 @@ class Hinos extends CI_Controller {
 
 	}
 
+    public function GetFavoritos(){
+
+        $acesso_aprovado = $this->Crud_model->ValidarToken($this->uri->segment(3), 1);
+
+        if ($acesso_aprovado) {
+
+            $sql = "select h.id_hymn, c.id_cd, c.title as cd, h.title, h.url from favoritos_usuario f
+              INNER JOIN hymn h ON (h.id_hymn = f.id_hymn)
+              INNER JOIN cd c ON (c.id_cd = h.id_cd) LIMIT 50";
+            $hinos = $this->Crud_model->Query($sql);
+
+            $json = array('hinos' => $hinos);
+
+            echo json_encode($json, JSON_UNESCAPED_UNICODE);;
+            return;
+        }
+
+        $this->output->set_status_header('401');
+
+    }
+
     public function GetCategoriasHinos(){
 
         $chave = $this->uri->segment(3);
